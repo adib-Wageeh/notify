@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notify/core/app_colors.dart';
 import 'package:notify/core/device_util.dart';
 import 'package:notify/core/notifications_helper/notifications_util.dart';
-import 'package:notify/ui/widgets/content_container.dart';
+import 'package:notify/ui/widgets/today_body/content_container.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class DeviceDetailsItem extends StatelessWidget {

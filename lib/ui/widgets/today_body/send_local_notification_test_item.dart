@@ -4,7 +4,7 @@ import 'package:notify/core/app_colors.dart';
 import 'package:notify/core/notifications_helper/local_notification_util.dart';
 import 'package:notify/core/notifications_helper/notifications_util.dart';
 import 'package:notify/cubit/enable_notification/enable_notifications_cubit.dart';
-import 'package:notify/ui/widgets/content_container.dart';
+import 'package:notify/ui/widgets/today_body/content_container.dart';
 
 class SendLocalNotificationTestItem extends StatelessWidget {
   const SendLocalNotificationTestItem({super.key});

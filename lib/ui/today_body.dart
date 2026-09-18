@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notify/core/app_colors.dart';
 import 'package:notify/core/date_util.dart';
 import 'package:notify/core/notifications_helper/local_notification_util.dart';
-import 'package:notify/ui/widgets/device_details_item.dart';
-import 'package:notify/ui/widgets/send_local_notification_test_item.dart';
+import 'package:notify/cubit/enable_notification/enable_notifications_cubit.dart';
+import 'package:notify/ui/widgets/today_body/device_details_item.dart';
+import 'package:notify/ui/widgets/today_body/send_local_notification_test_item.dart';
 
 class TodayBody extends StatefulWidget {
   const TodayBody({super.key});
@@ -25,19 +27,20 @@ class _TodayBodyState extends State<TodayBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.grey800,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            color: AppColors.primary900,
-            height: MediaQuery.paddingOf(context).top,
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+    return BlocProvider<EnableNotificationsCubit>(
+      create: (_) => EnableNotificationsCubit(),
+      child: Scaffold(
+        backgroundColor: AppColors.grey800,
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              color: AppColors.primary900,
+              height: MediaQuery.paddingOf(context).top,
+            ),
+            Expanded(
               child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 18),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -65,9 +68,9 @@ class _TodayBodyState extends State<TodayBody> {
                 ),
               ),
             ),
-          ),
-          SendLocalNotificationTestItem(),
-        ],
+            SendLocalNotificationTestItem(),
+          ],
+        ),
       ),
     );
   }
