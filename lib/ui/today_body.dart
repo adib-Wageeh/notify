@@ -2,35 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notify/core/app_colors.dart';
 import 'package:notify/core/date_util.dart';
-import 'package:notify/core/notifications_helper/local_notification_util.dart';
 import 'package:notify/cubit/enable_notification/enable_notifications_cubit.dart';
 import 'package:notify/ui/widgets/today_body/device_details_item.dart';
 import 'package:notify/ui/widgets/today_body/send_local_notification_test_item.dart';
+import 'package:notify/ui/widgets/today_body/today_nudges_item.dart';
 
-class TodayBody extends StatefulWidget {
+class TodayBody extends StatelessWidget {
   const TodayBody({super.key});
-
-  @override
-  State<TodayBody> createState() => _TodayBodyState();
-}
-
-class _TodayBodyState extends State<TodayBody> {
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      LocalNotificationHelper.getInitNotification();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<EnableNotificationsCubit>(
       create: (_) => EnableNotificationsCubit(),
       child: Scaffold(
-        backgroundColor: AppColors.grey800,
+        backgroundColor: AppColors.primary900,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -39,7 +24,7 @@ class _TodayBodyState extends State<TodayBody> {
               height: MediaQuery.paddingOf(context).top,
             ),
             Expanded(
-              child: SingleChildScrollView(
+              child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 18),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +48,8 @@ class _TodayBodyState extends State<TodayBody> {
                     ),
                     const SizedBox(height: 16),
                     DeviceDetailsItem(),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 24),
+                    Expanded(child: TodayNudgesItem()),
                   ],
                 ),
               ),
@@ -75,5 +61,3 @@ class _TodayBodyState extends State<TodayBody> {
     );
   }
 }
-
-

@@ -14,6 +14,10 @@ String dateTimeToString2(DateTime date) {
   return DateFormat('dd/MM/yyyy, hh:mm a').format(date);
 }
 
+String dateTimeToString3(DateTime date) {
+  return DateFormat('hh:mm a').format(date);
+}
+
 String timeOfDayToString(TimeOfDay time) {
   final period = time.hour >= 12 ? 'PM' : 'AM';
   final hour12 = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;

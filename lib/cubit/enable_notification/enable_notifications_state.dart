@@ -9,5 +9,6 @@ class EnableNotificationsState with _$EnableNotificationsState {
 
   const factory EnableNotificationsState.denied() = _Denied;
 
-  const factory EnableNotificationsState.approved() = _Approved;
+  const factory EnableNotificationsState.approved(VoidCallback? onDone) =
+      _Approved;
 }

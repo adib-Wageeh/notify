@@ -1,14 +1,16 @@
 import 'dart:math';
-
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:notify/core/app_colors.dart';
 import 'package:notify/core/app_constants.dart';
 import 'package:notify/core/date_util.dart';
 import 'package:notify/core/notifications_helper/local_notification_util.dart';
 import 'package:notify/core/notifications_helper/notifications_util.dart';
 import 'package:notify/cubit/enable_notification/enable_notifications_cubit.dart';
+import 'package:notify/models/notification_action/notification_action.dart';
+import 'package:notify/models/notification_model.dart';
 import 'package:notify/ui/widgets/create_body/app_text_field_item.dart';
 import 'package:notify/ui/widgets/create_body/delivery_type_item.dart';
 import 'package:notify/ui/widgets/create_body/when_tapped_item.dart';
@@ -46,26 +48,51 @@ class _CreateBodyState extends State<CreateBody> {
       create: (_) => EnableNotificationsCubit(),
       child: Builder(
         builder: (context) {
-          return BlocListener<EnableNotificationsCubit, EnableNotificationsState>(
+          return BlocListener<
+            EnableNotificationsCubit,
+            EnableNotificationsState
+          >(
             listener: (context, state) => state.whenOrNull(
-              approved: () async {
+              approved: (_) async {
                 final mergedTime = mergeDateAndTime(selectedDate, selectedTime);
-                await LocalNotificationHelper.sendNotification(
-                  title: reminderNameController.text.trim(),
-                  body: "",
-                  scheduledDate: mergedTime,
+                NotificationModel model = NotificationModel(
                   id: Random().nextInt(1000000),
-                  payload: AppConstants.whatToOpenItems[whenTapped.value],
+                  title: reminderNameController.text.trim(),
+                  description: "",
+                  scheduledDate: mergedTime,
+                  payload:
+                      AppConstants.whatToOpenItems[whenTapped.value] ??
+                      AppConstants.whatToOpenItems.values.first,
+                  markedDone: false,
+                  actions: [
+                    NotificationAction(
+                      id: AppConstants.markAsDoneActionId,
+                      title: "Mark as done",
+                    ),
+                    NotificationAction(
+                      id: AppConstants.snoozeActionId,
+                      title: "Snooze 10 minutes",
+                    ),
+                  ],
                 );
-                BotToast.showText(
-                  text:
-                      "notification will be sent in ${dateTimeToString2(mergedTime)}",
+
+                final result = await LocalNotificationHelper.sendNotification(
+                  notification: model,
                 );
+                if (result) {
+                  BotToast.showText(
+                    text:
+                        "notification will be sent in ${dateTimeToString2(mergedTime)}",
+                  );
+                  await Hive.box<NotificationModel>(
+                    AppConstants.hiveBoxName,
+                  ).put(model.id, model);
+                }
                 return null;
               },
             ),
             child: Scaffold(
-              backgroundColor: AppColors.grey800,
+              backgroundColor: AppColors.primary900,
               body: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -75,7 +102,10 @@ class _CreateBodyState extends State<CreateBody> {
                   ),
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 18,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -135,10 +165,8 @@ class _CreateBodyState extends State<CreateBody> {
                                     );
 
                                     if (time != null) {
-                                      final mergedSelectedTime = mergeDateAndTime(
-                                        selectedDate,
-                                        time,
-                                      );
+                                      final mergedSelectedTime =
+                                          mergeDateAndTime(selectedDate, time);
                                       if (mergedSelectedTime.isBefore(
                                         DateTime.now(),
                                       )) {
@@ -168,12 +196,25 @@ class _CreateBodyState extends State<CreateBody> {
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: () async {
-                                final response =
-                                    await requestNotificationsPermission(context);
-                                if (context.mounted) {
-                                  BlocProvider.of<EnableNotificationsCubit>(
-                                    context,
-                                  ).notificationsStatusChanged(response);
+                                final date = mergeDateAndTime(
+                                  selectedDate,
+                                  selectedTime,
+                                );
+
+                                if (date.isBefore(DateTime.now())) {
+                                  BotToast.showText(
+                                    text: "Must be a date in the future",
+                                  );
+                                } else {
+                                  final response =
+                                      await requestNotificationsPermission(
+                                        context,
+                                      );
+                                  if (context.mounted) {
+                                    BlocProvider.of<EnableNotificationsCubit>(
+                                      context,
+                                    ).notificationsStatusChanged(response);
+                                  }
                                 }
                               },
                               style: ButtonStyle(
@@ -208,7 +249,7 @@ class _CreateBodyState extends State<CreateBody> {
               ),
             ),
           );
-        }
+        },
       ),
     );
   }

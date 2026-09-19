@@ -128,13 +128,13 @@ return approved(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  permanentlyDenied,TResult Function()?  denied,TResult Function()?  approved,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  permanentlyDenied,TResult Function()?  denied,TResult Function( VoidCallback? onDone)?  approved,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _PermanentlyDenied() when permanentlyDenied != null:
 return permanentlyDenied();case _Denied() when denied != null:
 return denied();case _Approved() when approved != null:
-return approved();case _:
+return approved(_that.onDone);case _:
   return orElse();
 
 }
@@ -152,13 +152,13 @@ return approved();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  permanentlyDenied,required TResult Function()  denied,required TResult Function()  approved,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  permanentlyDenied,required TResult Function()  denied,required TResult Function( VoidCallback? onDone)  approved,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _PermanentlyDenied():
 return permanentlyDenied();case _Denied():
 return denied();case _Approved():
-return approved();case _:
+return approved(_that.onDone);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -175,13 +175,13 @@ return approved();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  permanentlyDenied,TResult? Function()?  denied,TResult? Function()?  approved,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  permanentlyDenied,TResult? Function()?  denied,TResult? Function( VoidCallback? onDone)?  approved,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _PermanentlyDenied() when permanentlyDenied != null:
 return permanentlyDenied();case _Denied() when denied != null:
 return denied();case _Approved() when approved != null:
-return approved();case _:
+return approved(_that.onDone);case _:
   return null;
 
 }
@@ -289,32 +289,66 @@ String toString() {
 
 
 class _Approved implements EnableNotificationsState {
-  const _Approved();
+  const _Approved(this.onDone);
   
 
+ final  VoidCallback? onDone;
 
-
+/// Create a copy of EnableNotificationsState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ApprovedCopyWith<_Approved> get copyWith => __$ApprovedCopyWithImpl<_Approved>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Approved);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Approved&&(identical(other.onDone, onDone) || other.onDone == onDone));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,onDone);
 
 @override
 String toString() {
-  return 'EnableNotificationsState.approved()';
+  return 'EnableNotificationsState.approved(onDone: $onDone)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$ApprovedCopyWith<$Res> implements $EnableNotificationsStateCopyWith<$Res> {
+  factory _$ApprovedCopyWith(_Approved value, $Res Function(_Approved) _then) = __$ApprovedCopyWithImpl;
+@useResult
+$Res call({
+ VoidCallback? onDone
+});
 
 
+
+
+}
+/// @nodoc
+class __$ApprovedCopyWithImpl<$Res>
+    implements _$ApprovedCopyWith<$Res> {
+  __$ApprovedCopyWithImpl(this._self, this._then);
+
+  final _Approved _self;
+  final $Res Function(_Approved) _then;
+
+/// Create a copy of EnableNotificationsState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? onDone = freezed,}) {
+  return _then(_Approved(
+freezed == onDone ? _self.onDone : onDone // ignore: cast_nullable_to_non_nullable
+as VoidCallback?,
+  ));
+}
+
+
+}
 
 // dart format on
