@@ -18,7 +18,9 @@ class FCMHelper {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     // Triggered whenever an FCM message arrives while the app is foregrounded.
-    FirebaseMessaging.onMessage.listen(_showLocalNotificationFromFCMNotification);
+    FirebaseMessaging.onMessage.listen(
+      _showLocalNotificationFromFCMNotification,
+    );
   }
 
   // User taps an FCM notification while the app is terminated,
@@ -51,6 +53,4 @@ class FCMHelper {
 // Save data, update local storage, or create a local notification.
 // Do not navigate, use BuildContext, or update UI here.
 @pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // await Firebase.initializeApp();
-}
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {}
