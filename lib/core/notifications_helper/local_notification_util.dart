@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:bot_toast/bot_toast.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:notify/core/app_constants.dart';
@@ -143,6 +144,48 @@ class LocalNotificationHelper {
         navigationKey.currentContext?.go(payload!);
       }
     }
+  }
+
+  static Future<void> showLocalNotificationFromFcm(
+    RemoteMessage message,
+  ) async {
+    final title =
+        message.notification?.title ??
+        message.data['title']?.toString() ??
+        'New notification';
+
+    final body =
+        message.notification?.body ?? message.data['body']?.toString() ?? '';
+
+    final notificationId =
+        (message.messageId?.hashCode ?? DateTime.now().millisecondsSinceEpoch) &
+        0x7fffffff;
+
+    const androidDetails = AndroidNotificationDetails(
+      'fcm_foreground_channel',
+      'Foreground FCM notifications',
+      channelDescription: 'Notifications received while the app is open',
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+
+    const iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    await instance.show(
+      id: notificationId,
+      title: title,
+      body: body,
+      notificationDetails: const NotificationDetails(
+        android: androidDetails,
+        iOS: iosDetails,
+      ),
+      // The custom Firebase Console field: payload
+      payload: message.data['payload']?.toString(),
+    );
   }
 }
 

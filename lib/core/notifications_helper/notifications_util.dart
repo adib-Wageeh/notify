@@ -38,6 +38,9 @@ Future<NotificationStatus> requestNotificationsPermission(
       criticalAlert: true,
       provisional: true,
     );
+    // for ios to show notification dialog when app is in foreground
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(alert: true);
   }
   status = await Permission.notification.status;
 

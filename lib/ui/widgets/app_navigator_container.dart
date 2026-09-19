@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:notify/core/app_colors.dart';
+import 'package:notify/core/notifications_helper/fcm_util.dart';
 import 'package:notify/core/notifications_helper/local_notification_util.dart';
 
 class AppNavigatorContainer extends StatefulWidget {
@@ -13,17 +14,17 @@ class AppNavigatorContainer extends StatefulWidget {
 }
 
 class _AppNavigatorContainerState extends State<AppNavigatorContainer> {
-
   @override
   void initState() {
     super.initState();
     initNotifications();
   }
 
-  void initNotifications()async{
+  void initNotifications() async {
     await LocalNotificationHelper.init();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      LocalNotificationHelper.getInitNotification();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await LocalNotificationHelper.getInitNotification();
+      await FCMHelper.initFcm();
     });
   }
 
